@@ -8,7 +8,6 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
 contract JCToken is ERC20, Ownable, VRFConsumerBase {
 
-    uint256 private nonce = 0;
     mapping (address => uint256) public addressLock;
     mapping (bytes32 => uint256) private randomRequests;
     uint256 private blockNumber;
@@ -57,9 +56,8 @@ contract JCToken is ERC20, Ownable, VRFConsumerBase {
      * @notice To be called by anyone that wants to burn a certain amount of tokens
      * @param amount Amount of tokens to burn
     */
-    // TODO: Make sure amount is not higher than balance
     function burn(uint amount) external {
-        _burn(_msgSender(), amount);
+        _burn(msg.sender, amount);
     }
 
     /**
@@ -77,7 +75,6 @@ contract JCToken is ERC20, Ownable, VRFConsumerBase {
     */
     function luckyDouble() external virtual {
         require(block.number > addressLock[_msgSender()], "Address is locked");
-        nonce++;
         getRandomNumber();
         uint randNum = randomResult % 1000;
         addressLock[_msgSender()] = block.number + getBlocksInYear();
