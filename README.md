@@ -2,7 +2,7 @@
 
 This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
 
-The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
+Came up with a sample cryptocurrency token using the ERC-20 standard. Provides mostly normal functionality except that once per year, users can call the luckyDouble() function for a 10% chance at doubling their funds. Good luck!
 
 Try running some of the following tasks:
 
@@ -40,3 +40,7 @@ Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_
 ```shell
 npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
 ```
+
+# Gas Report
+
+In order to see the gas report when running the test suite, enter your Coin Market Cap API key in the .env file with the variable name "CMC_API_KEY"
