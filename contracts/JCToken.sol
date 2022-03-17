@@ -22,32 +22,59 @@ contract JCToken is ERC20, Ownable, VRFConsumerBase {
         keyHash = 0x6c3699283bda56ad74f6b855546325b68d482e983852a7a82979cc4807b641f4;
     }
 
-    function getRandomNumber() public virtual returns (bytes32 requestId) {
+    /**
+     * @notice Calls into VRFConsumerBase to request a random number from Chainlink's Oracle service
+     * @dev Makes sure contract is funded with enough LINK to pay Chainlink's fee, then makes Oracle call
+     * @return requestId ID of random number request
+    */
+    function getRandomNumber() private returns (bytes32 requestId) {
         require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK");
         return requestRandomness(keyHash, fee);
     }
 
+    /**
+     * @notice Callback function that gets called from Chainlink Oracle after random number is generated
+     * @dev Saves random number in mapping and state variable
+     * @param requestId ID of random number request
+     * @param randomness Generated random number
+    */
     function fulfillRandomness(bytes32 requestId, uint randomness) internal override {
         randomRequests[requestId] = randomness;
         randomResult = randomness;
     }
 
+    /**
+     * @notice To be called by the owner of this contract when minting is desired
+     * @dev Mints a set amount of tokens to a specific address
+     * @param to Address of recipient
+     * @param amount Amount of tokens to mint
+    */
     function mint(address to, uint amount) external onlyOwner {
         _mint(to, amount);
     }
 
+    /**
+     * @notice To be called by anyone that wants to burn a certain amount of tokens
+     * @param amount Amount of tokens to burn
+    */
+    // TODO: Make sure amount is not higher than balance
     function burn(uint amount) external {
         _burn(_msgSender(), amount);
     }
 
-    function getRandom() internal virtual returns (uint) {
-        return uint(keccak256(abi.encodePacked(_msgSender(), nonce, block.number))) % 1000;
-    }
-
+    /**
+     * @dev Getter function that returns the number of blocks in a year
+    */
     function getBlocksInYear() internal virtual returns (uint) {
         return blocksInYear;
     }
 
+    /**
+     * @notice To be called from anyone that would like to take a chance to double their token balance
+     * @dev Using an random number, provides a 10% chance that msg.sender's account balance will double
+     * @dev 90% chance they will lose 10% of their account balance
+     * @dev Can only be called once per year at the most. 2 year block if someone's account balance doubles
+    */
     function luckyDouble() external virtual {
         require(block.number > addressLock[_msgSender()], "Address is locked");
         nonce++;

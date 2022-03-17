@@ -23,7 +23,7 @@ contract MockJCToken is JCToken {
         return mockBlocksInYear;
     }
 
-    function getRandom() internal view override returns (uint) {
+    function getRandom() internal view returns (uint) {
         return mockRandomNum;
     }
 
