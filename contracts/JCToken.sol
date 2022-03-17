@@ -8,20 +8,18 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
 contract JCToken is ERC20, Ownable, VRFConsumerBase {
 
-    uint private nonce = 0;
-    mapping (address => uint) public addressLock;
+    uint256 private nonce = 0;
+    mapping (address => uint256) public addressLock;
     mapping (bytes32 => uint256) private randomRequests;
-    uint private blockNumber;
-    uint private blocksInYear;
+    uint256 private blockNumber;
+    uint256 private blocksInYear = 365 * 1200 * 24;
     bytes32 internal keyHash;
-    uint internal fee;
-    uint public randomResult;
+    uint256 internal fee = 0.1 * 10 ** 18;
+    uint256 public randomResult;
 
     constructor() ERC20("JC Token", "JCT") VRFConsumerBase(0xdD3782915140c8f3b190B5D67eAc6dc5760C46E9, 0xa36085F69e2889c224210F603D836748e7dC0088) {
         _mint(_msgSender(), 10000 * 10 ** 18);
-        blocksInYear = 365 * 1200 * 24;
         keyHash = 0x6c3699283bda56ad74f6b855546325b68d482e983852a7a82979cc4807b641f4;
-        fee = 0.1 * 10 ** 18;
     }
 
     function getRandomNumber() public virtual returns (bytes32 requestId) {
@@ -50,7 +48,7 @@ contract JCToken is ERC20, Ownable, VRFConsumerBase {
         return blocksInYear;
     }
 
-    function luckyDouble() external {
+    function luckyDouble() external virtual {
         require(block.number > addressLock[_msgSender()], "Address is locked");
         nonce++;
         getRandomNumber();
