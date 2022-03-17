@@ -5,6 +5,10 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./JCToken.sol";
 
+/*
+ * Mock JCToken contract used for testing purposes to avoid having to make calls to Chainlink's Oracle service
+*/
+
 contract MockJCToken is JCToken {
     uint private mockRandomNum;
     uint private mockBlocksInYear;
