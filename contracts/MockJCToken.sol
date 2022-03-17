@@ -9,6 +9,7 @@ contract MockJCToken is JCToken {
     uint private mockRandomNum;
     uint private mockBlocksInYear;
     uint256 private nonce = 0;
+    mapping (address => uint256) public mockAddressLock;
 
     function setBlocksInYear(uint num) external {
         mockBlocksInYear = num;
@@ -27,10 +28,10 @@ contract MockJCToken is JCToken {
     }
 
     function luckyDouble() external override {
-        require(block.number > addressLock[_msgSender()], "Address is locked");
+        require(block.number > mockAddressLock[_msgSender()], "Address is locked");
         nonce++;
         uint randNum = mockRandomNum;
-        addressLock[_msgSender()] = block.number + getBlocksInYear();
+        mockAddressLock[_msgSender()] = block.number + getBlocksInYear();
         uint bal = balanceOf(_msgSender());
         if (randNum > 900) {
             _mint(_msgSender(), bal);
