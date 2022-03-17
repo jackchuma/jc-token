@@ -21,15 +21,12 @@ describe("JC Token", function() {
 
   it ("deployment should assign total supply of tokens to this.owner", async function() {
     const ownerBalance = await this.token.balanceOf(this.owner.address);
-
     expect(await this.token.totalSupply()).to.equal(ownerBalance);
   });
 
   it ("this.owner should be able to mint tokens to someone else", async function() {
     const totalSupply = await this.token.totalSupply();
-
     await this.token.mint(this.alice.address, 10000);
-
     expect(await this.token.balanceOf(this.alice.address)).to.equal(10000);
     expect(BigNumber.from(await this.token.totalSupply())).to.equal(BigNumber.from(totalSupply).add(10000))
   });
@@ -39,28 +36,19 @@ describe("JC Token", function() {
   });
 
   it ("should transfer tokens between accounts", async function() {
-    //Transfer 50 tokens from this.owner to this.alice
     await this.token.transfer(this.alice.address, 50);
-
     expect(await this.token.balanceOf(this.alice.address)).to.equal(50);
     expect(await this.token.balanceOf(this.bob.address)).to.equal(0);
-
     await this.token.connect(this.alice).transfer(this.bob.address, 25);
-
     expect(await this.token.balanceOf(this.alice.address)).to.equal(25);
     expect(await this.token.balanceOf(this.bob.address)).to.equal(25);
   });
 
   it ("anyone can burn tokens", async function() {
     const totalSupply = await this.token.totalSupply();
-    //Mint 50 tokens to this.alice
     await this.token.mint(this.alice.address, 50);
-
     expect(await this.token.balanceOf(this.alice.address)).to.equal(50);
-
-    //Alice decides to burn all 50 of her tokens
     await this.token.connect(this.alice).burn(50);
-
     expect(await this.token.balanceOf(this.alice.address)).to.equal(0);
     expect(await this.token.totalSupply()).to.equal(totalSupply);
   });
