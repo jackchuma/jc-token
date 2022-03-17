@@ -10,6 +10,7 @@ contract JCToken is ERC20, Ownable, VRFConsumerBase {
 
     uint private nonce = 0;
     mapping (address => uint) public addressLock;
+    mapping (bytes32 => uint256) private randomRequests;
     uint private blockNumber;
     uint private blocksInYear;
     bytes32 internal keyHash;
@@ -29,6 +30,7 @@ contract JCToken is ERC20, Ownable, VRFConsumerBase {
     }
 
     function fulfillRandomness(bytes32 requestId, uint randomness) internal override {
+        randomRequests[requestId] = randomness;
         randomResult = randomness;
     }
 
