@@ -26,37 +26,28 @@ describe("JC Token", function() {
     });
   });
 
-  it ("this.owner should be able to mint tokens to someone else", async function() {
-    const totalSupply = await this.token.totalSupply();
-    await this.token.mint(this.alice.address, 10000);
-    expect(await this.token.balanceOf(this.alice.address)).to.equal(10000);
-    expect(BigNumber.from(await this.token.totalSupply())).to.equal(BigNumber.from(totalSupply).add(10000))
+  context("mint()", async function() {
+    it ("owner should be able to mint tokens to someone else", async function() {
+      const totalSupply = await this.token.totalSupply();
+      await this.token.mint(this.alice.address, 10000);
+      expect(await this.token.balanceOf(this.alice.address)).to.equal(10000);
+      expect(BigNumber.from(await this.token.totalSupply())).to.equal(BigNumber.from(totalSupply).add(10000))
+    });
+
+    it ("only owner can mint tokens", async function() {
+      await expect(this.token.connect(this.alice).mint(this.bob.address, 50)).to.be.revertedWith("Ownable: caller is not the owner");
+    });
   });
 
-  it ("only this.owner can mint tokens", async function() {
-    await expect(this.token.connect(this.alice).mint(this.bob.address, 50)).to.be.revertedWith("Ownable: caller is not the owner");
-  });
-
-  it ("should transfer tokens between accounts", async function() {
-    await this.token.transfer(this.alice.address, 50);
-    expect(await this.token.balanceOf(this.alice.address)).to.equal(50);
-    expect(await this.token.balanceOf(this.bob.address)).to.equal(0);
-    await this.token.connect(this.alice).transfer(this.bob.address, 25);
-    expect(await this.token.balanceOf(this.alice.address)).to.equal(25);
-    expect(await this.token.balanceOf(this.bob.address)).to.equal(25);
-  });
-
-  it ("anyone can burn tokens", async function() {
-    const totalSupply = await this.token.totalSupply();
-    await this.token.mint(this.alice.address, 50);
-    expect(await this.token.balanceOf(this.alice.address)).to.equal(50);
-    await this.token.connect(this.alice).burn(50);
-    expect(await this.token.balanceOf(this.alice.address)).to.equal(0);
-    expect(await this.token.totalSupply()).to.equal(totalSupply);
-  });
-
-  it ("should fail if sender doesn't have enough tokens", async function() {
-    await expect(this.token.connect(this.alice).transfer(this.bob.address, 50)).to.be.revertedWith("ERC20: transfer amount exceeds balance");
+  context("burn()", async function() {
+    it ("anyone can burn tokens", async function() {
+      const totalSupply = await this.token.totalSupply();
+      await this.token.mint(this.alice.address, 50);
+      expect(await this.token.balanceOf(this.alice.address)).to.equal(50);
+      await this.token.connect(this.alice).burn(50);
+      expect(await this.token.balanceOf(this.alice.address)).to.equal(0);
+      expect(await this.token.totalSupply()).to.equal(totalSupply);
+    });
   });
 
   context("luckyDouble()", async function() {
