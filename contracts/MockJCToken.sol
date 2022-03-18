@@ -32,7 +32,7 @@ contract MockJCToken is JCToken {
 
     function luckyDouble() external override {
         require(block.number > mockAddressLock[_msgSender()], "Address is locked");
-        uint randNum = mockRandomNum;
+        uint randNum = getRandom();
         mockAddressLock[_msgSender()] = block.number + getBlocksInYear();
         uint bal = balanceOf(_msgSender());
         if (randNum > 900) {
